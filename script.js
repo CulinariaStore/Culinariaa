@@ -1,3 +1,10 @@
+fetch('https://api.countapi.xyz/hit/culinaria-store/visitas')
+  .then(response => response.json())
+  .then(data => {
+    document.getElementById('visitas').innerText = data.value;
+  })
+  .catch(err => console.error(err));
+
 // Atualiza automaticamente o ano no rodapé
 document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -33,3 +40,33 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
   });
 });
+
+function contarVisita() {
+  const hoje = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+
+  let visitas = JSON.parse(localStorage.getItem("visitas")) || {};
+
+  if (visitas[hoje]) {
+    visitas[hoje]++;
+  } else {
+    visitas[hoje] = 1;
+  }
+
+  localStorage.setItem("visitas", JSON.stringify(visitas));
+}
+
+function mostrarVisitas() {
+  const visitas = JSON.parse(localStorage.getItem("visitas")) || {};
+  const lista = document.getElementById("lista-visitas");
+
+  lista.innerHTML = "";
+
+  for (let data in visitas) {
+    const li = document.createElement("li");
+    li.textContent = `${data}: ${visitas[data]} acessos`;
+    lista.appendChild(li);
+  }
+}
+
+contarVisita();
+window.onload = mostrarVisitas;
